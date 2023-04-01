@@ -18,6 +18,7 @@ public class AIHandler : MonoBehaviour
     public float reactionSpeed = 4f;
     public float driveToTargetInfluenceFactor = 6f;
     public float minDistanceDetectCar = 6f;
+    public float maxSpeed = 8;
     
     private Vector2 _avoidanceVectorLerped = Vector2.zero;
 
@@ -26,6 +27,8 @@ public class AIHandler : MonoBehaviour
     private float _aiSpeedFactor = 1.05f;
 
     private WaypointNode _currentWaypoint = null;
+    private WaypointNode _previousWaypoint = null;
+    private WaypointNode _temporaryWaypoint = null;
     private WaypointNode[] _allWayPoints;
     
     private CarController _carController;
@@ -34,7 +37,7 @@ public class AIHandler : MonoBehaviour
     
     
     //visualization
-    private WaypointNode _tempWaypoint = null;
+    
 
     private void Awake()
     {
@@ -51,7 +54,7 @@ public class AIHandler : MonoBehaviour
             }
         }
 
-        _tempWaypoint = _currentWaypoint;
+        _previousWaypoint = _currentWaypoint;
     }
     
     
@@ -77,6 +80,11 @@ public class AIHandler : MonoBehaviour
 
     private float ApplyAISpeed(float inputX)
     {
+        if (_carController.GetVelocityMagnitude() > maxSpeed )
+        {
+            return 0;
+        }
+
         return _aiSpeedFactor - Mathf.Abs(inputX) / 1f;
     }
     
@@ -121,6 +129,7 @@ public class AIHandler : MonoBehaviour
         if (_currentWaypoint == null)
         {
             _currentWaypoint = FindClosestWaypoint();
+            _previousWaypoint = _currentWaypoint;
         }
         else
         {
@@ -130,28 +139,65 @@ public class AIHandler : MonoBehaviour
             //visualization
             if (_carController.carName == "Player")
             {
-                _currentWaypoint.isActiveNode = true;
-                _tempWaypoint = _currentWaypoint;
+                _temporaryWaypoint = _currentWaypoint;
+                _temporaryWaypoint.isActiveNode = true;
             }
 
             //changing waypoint
             float distanceToWaypoint = (_targetPosition - transform.position).magnitude;
 
+            if (distanceToWaypoint > 8)
+            {
+                Vector3 nearestPointOnTheWaypointLine = FindNearestPointOnLine(_previousWaypoint.transform.position, _currentWaypoint.transform.position, transform.position);
+
+                float segments = distanceToWaypoint/ 8f;
+
+                _targetPosition = (_targetPosition + nearestPointOnTheWaypointLine * segments)/ (segments+1);
+
+                Debug.DrawLine(transform.position, _targetPosition, Color.cyan);
+            }
+
 
             if (distanceToWaypoint <= _currentWaypoint.minDistanceToReachWaypoint)
             {
+                if (_currentWaypoint.maxSpeed > 0)
+                {
+                    maxSpeed = _currentWaypoint.maxSpeed;
+                }
+                else
+                {
+                    maxSpeed = 1000;
+                }
+
+                _previousWaypoint= _currentWaypoint;
+
                 //will pick randomly if splitNode
                 _currentWaypoint = _currentWaypoint.nextWaypoint[Random.Range(0, _currentWaypoint.nextWaypoint.Length)];
                 
                 //visualization
                 if (_carController.carName == "Player")
                 {
-                    _tempWaypoint.isActiveNode = false;
+                    _temporaryWaypoint.isActiveNode = false;
                 }
                 
             }
 
         }
+    }
+
+    private Vector2 FindNearestPointOnLine(Vector2 lineStartPos, Vector2 lineEndPos, Vector2 point)
+    {
+        Vector2 lineHeading = lineEndPos - lineStartPos;
+
+        float maxDistance = lineHeading.magnitude;
+        lineHeading.Normalize();
+
+        Vector2 lineVectorStartToPoint = point - lineStartPos;
+        float dotProduct = Vector2.Dot(lineVectorStartToPoint, lineHeading);
+
+        dotProduct = Mathf.Clamp(dotProduct, 0, maxDistance);
+
+        return lineStartPos + lineHeading* dotProduct;
     }
 
     private WaypointNode FindClosestWaypoint()

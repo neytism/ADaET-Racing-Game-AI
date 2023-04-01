@@ -8,6 +8,7 @@ public class WaypointNode : MonoBehaviour
     
     [Header("This is the waypoint we are going towards")]
     public float minDistanceToReachWaypoint = 5f;
+    public float maxSpeed = 6f;
 
     public bool isStartingPoint = false;
     public bool isEndingPoint = false;

@@ -10,7 +10,7 @@ public class DrawPath : MonoBehaviour
     public List<Transform> childNodeList = new List<Transform>();
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.red;
+        Gizmos.color = Color.blue;
         
         FillNodes();
 

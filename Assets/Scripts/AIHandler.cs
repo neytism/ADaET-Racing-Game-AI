@@ -12,19 +12,36 @@ public class AIHandler : MonoBehaviour
         followPlayer,
         followWaypoints
     }
+    
+    public enum AIDifficulty
+    {
+        easy,
+        meduim,
+        hard,
+        extreme
+    }
 
     public AIMode aiMode;
+    public AIDifficulty aiDifficulty;
     public bool isAvoidingCars = true;
-    public float reactionSpeed = 4f;
     public float driveToTargetInfluenceFactor = 6f;
     public float minDistanceDetectCar = 6f;
     public float maxSpeed = 8;
+    [Range(0.0f, 1.0f)] public float skillLevel = 1.0f;
+    [Header("higher = more jitter & more responsive")]public float reactionSpeed = 4f;
+
+    private Transform raycastHitCar;
     
     private Vector2 _avoidanceVectorLerped = Vector2.zero;
 
     private Vector3 _targetPosition = Vector3.zero;
     private Transform _targetTransform = null;
     private float _aiSpeedFactor = 1.05f;
+    private float _originalMaxSpeed = 0f;
+    private float _tempAccelerator;
+
+    private float _maxSkillLevel;
+    private float _minSkillLevel;
 
     private WaypointNode _currentWaypoint = null;
     private WaypointNode _previousWaypoint = null;
@@ -44,6 +61,8 @@ public class AIHandler : MonoBehaviour
         _carController = GetComponent<CarController>();
         _allWayPoints = FindObjectsOfType<WaypointNode>();
         _collider2D = GetComponent<Collider2D>();
+        _originalMaxSpeed = maxSpeed;
+        _tempAccelerator = _carController.acceleratorFactor;
 
         //get the starting point
         foreach (var wp in _allWayPoints)
@@ -55,9 +74,39 @@ public class AIHandler : MonoBehaviour
         }
 
         _previousWaypoint = _currentWaypoint;
+        SetMaxSpeedBasedOnSkillLevel(maxSpeed);
+        
     }
-    
-    
+
+    private void Start()
+    {
+        if (gameObject.CompareTag("AI"))
+        {
+            switch (aiDifficulty)
+            {
+                case AIDifficulty.easy:
+                    _minSkillLevel = 0.85f;
+                    _maxSkillLevel = 0.89f;
+                    break;
+                case AIDifficulty.meduim:
+                    _minSkillLevel = 0.90f;
+                    _maxSkillLevel = 0.94f;
+                    break;
+                case AIDifficulty.hard:
+                    _minSkillLevel = 0.95f;
+                    _maxSkillLevel = 0.99f;
+                    break;
+                case AIDifficulty.extreme:
+                    _minSkillLevel = 1f;
+                    _maxSkillLevel = 1f;
+                    break;
+            }
+            
+            StartCoroutine(RandomSkill());
+        }
+    }
+
+
     void FixedUpdate()
     {
         Vector2 inputVector = Vector2.zero;
@@ -85,7 +134,17 @@ public class AIHandler : MonoBehaviour
             return 0;
         }
 
-        return _aiSpeedFactor - Mathf.Abs(inputX) / 1f;
+        float reduceSpeedDueToCornering = Mathf.Abs(inputX) / 1f;
+
+        return _aiSpeedFactor - reduceSpeedDueToCornering * skillLevel;
+    }
+
+    void SetMaxSpeedBasedOnSkillLevel(float newSpeed)
+    {
+        maxSpeed = Mathf.Clamp(newSpeed, 0, _originalMaxSpeed);
+
+        float skillBasedMaxSpeed = Mathf.Clamp(skillLevel, 0.3f, 1f);
+        maxSpeed *= skillBasedMaxSpeed;
     }
     
     private float TurnTowardTarget()
@@ -137,7 +196,7 @@ public class AIHandler : MonoBehaviour
             _targetPosition = _currentWaypoint.transform.position;
             
             //visualization
-            if (_carController.carName == "Player")
+            if (_carController.CompareTag("Player"))
             {
                 _temporaryWaypoint = _currentWaypoint;
                 _temporaryWaypoint.isActiveNode = true;
@@ -162,11 +221,11 @@ public class AIHandler : MonoBehaviour
             {
                 if (_currentWaypoint.maxSpeed > 0)
                 {
-                    maxSpeed = _currentWaypoint.maxSpeed;
+                    SetMaxSpeedBasedOnSkillLevel(_currentWaypoint.maxSpeed);
                 }
                 else
                 {
-                    maxSpeed = 1000;
+                    SetMaxSpeedBasedOnSkillLevel(1000);
                 }
 
                 _previousWaypoint= _currentWaypoint;
@@ -175,7 +234,7 @@ public class AIHandler : MonoBehaviour
                 _currentWaypoint = _currentWaypoint.nextWaypoint[Random.Range(0, _currentWaypoint.nextWaypoint.Length)];
                 
                 //visualization
-                if (_carController.carName == "Player")
+                if (_carController.CompareTag("Player"))
                 {
                     _temporaryWaypoint.isActiveNode = false;
                 }
@@ -215,6 +274,8 @@ public class AIHandler : MonoBehaviour
         //Perform the circle cast in front of the car with a slight offset forward and only in the Car layer
         RaycastHit2D raycastHit2d = Physics2D.CircleCast(transform.position + transform.up * 0.5f, .25f, transform.up, minDistanceDetectCar, 1 << LayerMask.NameToLayer("Cars"));
 
+        raycastHitCar = raycastHit2d.transform;
+        
         //Enable the colliders again so the car can collide and other cars can detect it.  
         _collider2D.enabled = true;
 
@@ -244,6 +305,7 @@ public class AIHandler : MonoBehaviour
     {
         if (IsCarsInFrontOfAICar(out Vector3 otherCarPosition, out Vector3 otherCarRightVector))
         {
+
             Vector2 avoidanceVector = Vector2.zero;
 
             //Calculate the reflecing vector if we would hit the other car. 
@@ -253,10 +315,28 @@ public class AIHandler : MonoBehaviour
 
             //We want to be able to control how much desire the AI has to drive towards the waypoint vs avoiding the other cars. 
             //As we get closer to the waypoint the desire to reach the waypoint increases.
-            float driveToTargetInfluence = driveToTargetInfluenceFactor / distanceToTarget;
 
-            //Ensure that we limit the value to between 30% and 100% as we always want the AI to desire to reach the waypoint.  
-            driveToTargetInfluence = Mathf.Clamp(driveToTargetInfluence, 0.30f, 1.0f);
+            float driveToTargetInfluence;
+
+            float distanceToCar = Vector2.Distance(transform.position, raycastHitCar.position) - .5f;
+
+            if (distanceToCar < 0.15f)
+            {
+                driveToTargetInfluence = 0.1f;
+            }
+            else
+            {
+                //Ensure that we limit the value to between x% and 100% as we always want the AI to desire to reach the waypoint.  
+                driveToTargetInfluence = driveToTargetInfluenceFactor / distanceToTarget;
+                driveToTargetInfluence = Mathf.Clamp(driveToTargetInfluence, 0.75f, 1f);
+            }
+            
+            
+                
+            if (gameObject.CompareTag("Player"))
+            {
+                Debug.Log($"influence: {driveToTargetInfluence} test: {distanceToCar}");
+            }
 
             //The desire to avoid the car is simply the inverse to reach the waypoint
             float avoidanceInfluence = 1.0f - driveToTargetInfluence;
@@ -268,18 +348,33 @@ public class AIHandler : MonoBehaviour
             newVectorToTarget = (vectorToTarget * driveToTargetInfluence + avoidanceVector * avoidanceInfluence);
             newVectorToTarget.Normalize();
 
-            //Draw the vector which indicates the avoidance vector in green
-            Debug.DrawRay(transform.position, avoidanceVector * 10, Color.green);
+            if (gameObject.CompareTag("Player"))
+            {
+                //Draw the vector which indicates the avoidance vector in green
+                Debug.DrawRay(transform.position, avoidanceVector * 10, Color.green);
 
-            //Draw the vector that the car will actually take in yellow. 
-            Debug.DrawRay(transform.position, newVectorToTarget * 10, Color.yellow);
+                //Draw the vector that the car will actually take in yellow. 
+                Debug.DrawRay(transform.position, newVectorToTarget * 10, Color.yellow);
+            }
+            
+            
+            _carController.acceleratorFactor = _tempAccelerator/2;
 
             //we are done so we can return now. 
             return;
         }
 
+        _carController.acceleratorFactor = _tempAccelerator;
+
         //We need assign a default value if we didn't hit any cars before we exit the function. 
         newVectorToTarget = vectorToTarget;
+    }
+
+    IEnumerator RandomSkill()
+    {
+        yield return new WaitForSeconds(5);
+        skillLevel = Random.Range(_minSkillLevel,_maxSkillLevel);
+        StartCoroutine(RandomSkill());
     }
     
     

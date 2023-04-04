@@ -7,7 +7,6 @@ using UnityEngine;
 public class CarController : MonoBehaviour
 {
     [Header("Car settings")] 
-    public string carName = "";
     public float acceleratorFactor = 30.0f;
     public float turnFactor = 3.5f;
     public float driftFactor = 0.95f;
@@ -18,15 +17,16 @@ public class CarController : MonoBehaviour
     private float steeringInput = 0;
     private float rotationAngle = 0;
     private float velocityVsUp = 0;
+    private float tempAccelerator;
 
     private Rigidbody2D carRigidBody2D;
-
-    private int _lapCount = 0;
 
     private void Awake()
     {
         carRigidBody2D = GetComponent<Rigidbody2D>();
-        
+
+        tempAccelerator = acceleratorFactor;
+
     }
     
     private void FixedUpdate()
@@ -127,16 +127,30 @@ public class CarController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D col)
     {
-        if (col.CompareTag("FinishLine"))
+        if (col.CompareTag("Grass"))
         {
-            _lapCount++;
-            Debug.Log($"{carName}'s lap count: {_lapCount}");
-            
+            acceleratorFactor = 1;
         }
+
+    }
+
+    private void OnTriggerExit2D(Collider2D col)
+    {
+        if (col.CompareTag("Grass"))
+        {
+            acceleratorFactor = tempAccelerator;
+        }
+    }
+
+    private void OnTriggerStay2D(Collider2D col)
+    {
+        
     }
 
     public float GetVelocityMagnitude()
     {
         return carRigidBody2D.velocity.magnitude;
     }
+
+    
 }

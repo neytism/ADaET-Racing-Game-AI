@@ -5222,14 +5222,16 @@ GameObject:
   m_Component:
   - component: {fileID: 621863261266071467}
   - component: {fileID: 621863261266071468}
+  - component: {fileID: 9089386142959533613}
+  - component: {fileID: 4758996528297835327}
   - component: {fileID: 621863261266071469}
+  - component: {fileID: 7537540238987161323}
   - component: {fileID: 621863261266071470}
   - component: {fileID: 6525736183442429746}
-  - component: {fileID: 4758996528297835327}
-  - component: {fileID: 9089386142959533613}
+  - component: {fileID: 6961033152640025108}
   m_Layer: 6
-  m_Name: Car AI
-  m_TagString: AI
+  m_Name: Car
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5271,84 +5273,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &621863261266071469
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 621863261266071464}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc73b8558b675204684bbb6525df6ad3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  acceleratorFactor: 5
-  turnFactor: 10
-  driftFactor: 0.9
-  dragFactor: 3
-  maximumSpeed: 6
---- !u!114 &621863261266071470
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 621863261266071464}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c5ca61ffdffbf3f49b19a8e467e27eff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  aiMode: 1
-  aiDifficulty: 0
-  isAvoidingCars: 1
-  driveToTargetInfluenceFactor: 2.5
-  minDistanceDetectCar: 6
-  maxSpeed: 8
-  skillLevel: 0.94
-  reactionSpeed: 2
---- !u!114 &6525736183442429746
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 621863261266071464}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 712161090b156c54db539f69e3422006, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  carName: Red
-  positionText: {fileID: 0}
---- !u!114 &4758996528297835327
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 621863261266071464}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7db70e0ea77f5ac47a8f4565a9406397, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_ShadowGroup: 0
-  m_ComponentVersion: 1
-  m_HasRenderer: 0
-  m_UseRendererSilhouette: 1
-  m_CastsShadows: 1
-  m_SelfShadows: 0
-  m_ApplyToSortingLayers: 00000000795cc0f4219af8a2b9a7aea20bdff6bf
-  m_ShapePath:
-  - {x: -0.10601807, y: -0.2096672, z: 0}
-  - {x: -0.10601807, y: 0.2096672, z: 0}
-  - {x: 0.10601807, y: 0.2096672, z: 0}
-  - {x: 0.10601807, y: -0.2096672, z: 0}
-  m_ShapePathHash: 0
-  m_Mesh: {fileID: 0}
-  m_InstanceId: -410742
 --- !u!61 &9089386142959533613
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -5375,6 +5299,109 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.25, y: 0.5}
   m_EdgeRadius: 0
+--- !u!114 &4758996528297835327
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 621863261266071464}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7db70e0ea77f5ac47a8f4565a9406397, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ShadowGroup: 0
+  m_ComponentVersion: 1
+  m_HasRenderer: 0
+  m_UseRendererSilhouette: 1
+  m_CastsShadows: 1
+  m_SelfShadows: 0
+  m_ApplyToSortingLayers: 00000000795cc0f4219af8a2b9a7aea20bdff6bf
+  m_ShapePath:
+  - {x: -0.10601807, y: -0.2096672, z: 0}
+  - {x: -0.10601807, y: 0.2096672, z: 0}
+  - {x: 0.10601807, y: 0.2096672, z: 0}
+  - {x: 0.10601807, y: -0.2096672, z: 0}
+  m_ShapePathHash: 0
+  m_Mesh: {fileID: 0}
+  m_InstanceId: 56758
+--- !u!114 &621863261266071469
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 621863261266071464}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc73b8558b675204684bbb6525df6ad3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  acceleratorFactor: 5
+  turnFactor: 10
+  driftFactor: 0.9
+  dragFactor: 3
+  maximumSpeed: 6
+--- !u!114 &7537540238987161323
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 621863261266071464}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd4fdf862969e9443b86083ca29fa216, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &621863261266071470
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 621863261266071464}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5ca61ffdffbf3f49b19a8e467e27eff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  aiMode: 1
+  aiDifficulty: 2
+  isAvoidingCars: 1
+  driveToTargetInfluenceFactor: 1
+  minDistanceDetectCar: 4
+  maxSpeed: 8
+  skillLevel: 1
+  reactionSpeed: 2
+--- !u!114 &6525736183442429746
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 621863261266071464}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 712161090b156c54db539f69e3422006, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  carName: Name
+  positionText: {fileID: 0}
+--- !u!114 &6961033152640025108
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 621863261266071464}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d5bdf0c23c100740897e45f9faa5155, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isDebugActiveForCar: 0
 --- !u!1 &621863261448561720
 GameObject:
   m_ObjectHideFlags: 0

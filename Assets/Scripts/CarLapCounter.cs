@@ -21,7 +21,7 @@ public class CarLapCounter : MonoBehaviour
     int numberOfPassedCheckpoints = 0;
 
     int lapsCompleted = 0;
-    const int lapsToComplete = 1;
+    const int lapsToComplete = 10;
 
     bool isRaceCompleted = false;
 
@@ -30,6 +30,8 @@ public class CarLapCounter : MonoBehaviour
 
     bool isHideRoutineRunning = false;
     float hideUIDelayTime;
+
+    private CheckPoint tempCheckPoint;
 
 
     //Events
@@ -82,13 +84,29 @@ public class CarLapCounter : MonoBehaviour
             //Once a car has completed the race we don't need to check any checkpoints or laps. 
             if (isRaceCompleted)
                 return;
+            
+            
 
             CheckPoint checkPoint = collider2D.GetComponent<CheckPoint>();
+            
+            if (gameObject.CompareTag("Player") && passedCheckPointNumber + 1 == checkPoint.checkPointNumber)
+            {
+                if (tempCheckPoint != null && tempCheckPoint != checkPoint)
+                {
+                    tempCheckPoint.isActiveCheckpoint = false;
+                }
+            }
+            
+            if (gameObject.CompareTag("Player"))
+            {
+                tempCheckPoint = checkPoint;
+            }
 
             //Make sure that the car is passing the checkpoints in the correct order. The correct checkpoint must have exactly 1 higher value than the passed checkpoint
             if (passedCheckPointNumber + 1 == checkPoint.checkPointNumber)
             {
                 passedCheckPointNumber = checkPoint.checkPointNumber;
+                
 
                 numberOfPassedCheckpoints++;
                 
@@ -105,6 +123,7 @@ public class CarLapCounter : MonoBehaviour
                 if (gameObject.CompareTag("Player"))
                 {
                     positionText.text = $"{carPosition} / {numberOfCars}";
+                    checkPoint.isActiveCheckpoint = true;
                 }
                 
                 if (checkPoint.isFinishLine)

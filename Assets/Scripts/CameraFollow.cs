@@ -6,13 +6,17 @@ using Random = UnityEngine.Random;
 
 public class CameraFollow : MonoBehaviour
 {
-    
     //for tracking player
     public Transform target;
     public float smoothSpeed;
     private Vector3 tempPos;
     public Vector3 minVal, maxVal;
-    
+
+    private void Awake()
+    {
+        target = GameObject.FindWithTag("Player").transform;
+    }
+
     void Update()
     {
         //follow player

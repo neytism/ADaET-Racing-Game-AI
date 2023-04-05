@@ -21,7 +21,7 @@ public class CarLapCounter : MonoBehaviour
     int numberOfPassedCheckpoints = 0;
 
     int lapsCompleted = 0;
-    const int lapsToComplete = 1000;
+    const int lapsToComplete = 1;
 
     bool isRaceCompleted = false;
 
@@ -122,13 +122,18 @@ public class CarLapCounter : MonoBehaviour
 
                 //Invoke the passed checkpoint event
                 OnPassCheckpoint?.Invoke(this);
-                
-                
+
+
 
                 //Now show the cars position as it has been calculated but only do it when a car passes through the finish line
-                if (isRaceCompleted)
+                if (isRaceCompleted && gameObject.CompareTag("Player"))
+                {
+                    //Jai- To freeze the game, tas ipasok UI dto
+                    Time.timeScale = 0;
                     StartCoroutine(ShowPositionCO(100));
-                else if(checkPoint.isFinishLine) 
+                }
+                //Jai - prang uneccesary neto?
+                else if (checkPoint.isFinishLine)
                     StartCoroutine(ShowPositionCO(1.5f));
             }
             

@@ -29,6 +29,7 @@ public class AIHandler : MonoBehaviour
     public float maxSpeed = 8;
     [Range(0.0f, 1.0f)] public float skillLevel = 1.0f;
     [Header("higher = more jitter & more responsive")]public float reactionSpeed = 4f;
+    [Header("Enable if there is obstacles in track")]public bool isAStarEnabled = false;
 
     private Transform raycastHitCar;
     
@@ -131,7 +132,7 @@ public class AIHandler : MonoBehaviour
                 FollowPlayer();
                 break;
             case AIMode.followWaypoints:
-                if (temporaryWaypoints.Count == 0)
+                if (temporaryWaypoints.Count == 0 && !isAStarEnabled)
                     FollowWaypoints();
                 else FollowTemporaryWayPoints();
                 

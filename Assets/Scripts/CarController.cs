@@ -31,9 +31,15 @@ public class CarController : MonoBehaviour
     
     private void FixedUpdate()
     {
-        ApplyEngineForce();
-        KillOrthoganoalVelocity();
-        ApplySteering();
+        if (GameManager.instance.GetGameStates() == GameStates.countDown)
+            return;
+        else
+        {
+            ApplyEngineForce();
+            KillOrthoganoalVelocity();
+            ApplySteering();
+        }
+        
         
         
     }

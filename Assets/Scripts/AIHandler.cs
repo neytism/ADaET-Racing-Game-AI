@@ -119,6 +119,10 @@ public class AIHandler : MonoBehaviour
 
     void FixedUpdate()
     {
+
+        if (GameManager.instance.GetGameStates() == GameStates.countDown)
+            return;
+
         Vector2 inputVector = Vector2.zero;
 
         switch (aiMode)

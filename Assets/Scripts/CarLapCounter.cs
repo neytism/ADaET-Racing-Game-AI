@@ -12,8 +12,9 @@ public class CarLapCounter : MonoBehaviour
     [Header("Car name")] 
     public string carName = "";
     public TextMeshProUGUI positionText;
+    public TextMeshProUGUI lapCountText;
 
-    int passedCheckPointNumber = 0;
+    public int passedCheckPointNumber = 0;
     float timeAtLastPassedCheckPoint = 0;
 
     private string timeText;
@@ -21,21 +22,23 @@ public class CarLapCounter : MonoBehaviour
     int numberOfPassedCheckpoints = 0;
 
     int lapsCompleted = 0;
-    const int lapsToComplete = 10;
+    const int lapsToComplete = 3;
 
     bool isRaceCompleted = false;
 
-    int carPosition = 0;
+    public int carPosition = 0;
     int numberOfCars;
 
-    bool isHideRoutineRunning = false;
-    float hideUIDelayTime;
+    public bool _isWrongWay = false;
 
-    private CheckPoint tempCheckPoint;
+    public CheckPoint tempCheckPoint;
+    
 
 
     //Events
-    public event Action<CarLapCounter> OnPassCheckpoint;
+    public event Action PlayerFinishedRace;
+    public event Action<CarLapCounter> CheckPosition;
+    public event Action OnPassCheckpoint;
 
     public void SetCarPosition(int position)
     {
@@ -56,26 +59,6 @@ public class CarLapCounter : MonoBehaviour
         return timeAtLastPassedCheckPoint;
     }
 
-    IEnumerator ShowPositionCO(float delayUntilHidePosition)
-    {
-        hideUIDelayTime += delayUntilHidePosition;
-
-        //carPositionText.text = carPosition.ToString();
-
-        //carPositionText.gameObject.SetActive(true);
-
-        if (!isHideRoutineRunning)
-        {
-            isHideRoutineRunning = true;
-
-            yield return new WaitForSeconds(hideUIDelayTime);
-            //carPositionText.gameObject.SetActive(false);
-
-            isHideRoutineRunning = false;
-        }
-
-    }
-
 
     void OnTriggerEnter2D(Collider2D collider2D)
     {
@@ -94,19 +77,25 @@ public class CarLapCounter : MonoBehaviour
                 if (tempCheckPoint != null && tempCheckPoint != checkPoint)
                 {
                     tempCheckPoint.isActiveCheckpoint = false;
-                }
+                } 
+            } else if (gameObject.CompareTag("Player") && passedCheckPointNumber + 1 != checkPoint.checkPointNumber)
+            {
+                _isWrongWay = true;
             }
             
-            if (gameObject.CompareTag("Player"))
-            {
-                tempCheckPoint = checkPoint;
-            }
+            
 
             //Make sure that the car is passing the checkpoints in the correct order. The correct checkpoint must have exactly 1 higher value than the passed checkpoint
             if (passedCheckPointNumber + 1 == checkPoint.checkPointNumber)
             {
-                passedCheckPointNumber = checkPoint.checkPointNumber;
+                if (gameObject.CompareTag("Player"))
+                {
+                    tempCheckPoint = checkPoint;
+                }
                 
+                passedCheckPointNumber = checkPoint.checkPointNumber;
+
+                _isWrongWay = false;
 
                 numberOfPassedCheckpoints++;
                 
@@ -133,14 +122,23 @@ public class CarLapCounter : MonoBehaviour
                     lapsCompleted++;
                     
                     Debug.Log($"{String.Format("{0, -12}", timeText)} | {String.Format("{0, -10}", carName)} | Laps Completed: {lapsCompleted} ");
-                    
+
                     if (lapsCompleted >= lapsToComplete)
+                    {
                         isRaceCompleted = true;
+                    }
+
+                    if (!isRaceCompleted && gameObject.CompareTag("Player"))
+                    {
+                        StartCoroutine(ShowLapCounter());
+                    }
+                       
                 }
 
 
                 //Invoke the passed checkpoint event
-                OnPassCheckpoint?.Invoke(this);
+                CheckPosition?.Invoke(this);
+                OnPassCheckpoint?.Invoke();
 
 
 
@@ -148,14 +146,20 @@ public class CarLapCounter : MonoBehaviour
                 if (isRaceCompleted && gameObject.CompareTag("Player"))
                 {
                     //Jai- To freeze the game, tas ipasok UI dto
-                    Time.timeScale = 0;
-                    StartCoroutine(ShowPositionCO(100));
+                    PlayerFinishedRace?.Invoke();
+                    //Time.timeScale = 0;
                 }
-                //Jai - prang uneccesary neto?
-                else if (checkPoint.isFinishLine)
-                    StartCoroutine(ShowPositionCO(1.5f));
             }
             
+            
         }
+    }
+
+    IEnumerator ShowLapCounter()
+    {
+        lapCountText.gameObject.SetActive(true);
+        lapCountText.text = $"Lap {lapsCompleted}/{lapsToComplete} : {timeText}";
+        yield return new WaitForSeconds(3f);
+        lapCountText.gameObject.SetActive(false);
     }
 }

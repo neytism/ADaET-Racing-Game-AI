@@ -23,7 +23,7 @@ public class PositionHandler : MonoBehaviour
         //Hook up the passed checkpoint event
         foreach (CarLapCounter lapCounters in carLapCounters)
         {
-            lapCounters.OnPassCheckpoint += OnPassCheckpoint;
+            lapCounters.CheckPosition += CheckPosition;
             lapCounters.SetNumberOfCars(carLapCounters.Count);
         }
             
@@ -40,7 +40,7 @@ public class PositionHandler : MonoBehaviour
         leaderboardUIHandler.UpdateList(carLapCounters);
     }
 
-    void OnPassCheckpoint(CarLapCounter carLapCounter)
+    void CheckPosition(CarLapCounter carLapCounter)
     {
         //Sort the cars positon first based on how many checkpoints they have passed, more is always better. Then sort on time where shorter time is better
         carLapCounters = carLapCounters.OrderByDescending(s => s.GetNumberOfCheckpointsPassed()).ThenBy(s => s.GetTimeAtLastCheckPoint()).ToList();

@@ -148,15 +148,12 @@ public class CarController : MonoBehaviour
         }
     }
 
-    private void OnTriggerStay2D(Collider2D col)
-    {
-        
-    }
 
     public float GetVelocityMagnitude()
     {
         return carRigidBody2D.velocity.magnitude;
     }
+
 
     
 }

@@ -24,14 +24,24 @@ public class CountdownUIHandler : MonoBehaviour
     {
         yield return new WaitForSeconds(0.3f);
 
+        CountDownText.fontSharedMaterial.SetColor(ShaderUtilities.ID_GlowColor, Color.red);
+        
         int counter = 3;
 
         while (true)
         {
             if (counter != 0)
+            {
+                if (counter == 1)
+                {
+                    CountDownText.fontSharedMaterial.SetColor(ShaderUtilities.ID_GlowColor, Color.yellow);
+                }
+                
                 CountDownText.text = counter.ToString();
+            }
             else
             {
+                CountDownText.fontSharedMaterial.SetColor(ShaderUtilities.ID_GlowColor, Color.green);
                 CountDownText.text = "GO";
 
                 GameManager.instance.OnRaceStart();

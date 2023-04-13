@@ -417,7 +417,7 @@ public class AIHandler : MonoBehaviour
             }
             
             
-            _carController.acceleratorFactor = _tempAccelerator/2;
+            _carController.acceleratorFactor = _tempAccelerator/1.5f;
 
             //we are done so we can return now. 
             return;

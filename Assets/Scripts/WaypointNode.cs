@@ -48,17 +48,17 @@ public class WaypointNode : MonoBehaviour
 
     }
 
-    private void Update()
-    {
-        if (isActiveNode)
-        {
-           _sr.color = Color.red;
-        }
-        else
-        {
-            _sr.color = Color.white;
-        }
-    }
+    // private void Update()
+    // {
+    //     if (isActiveNode)
+    //     {
+    //        _sr.color = Color.red;
+    //     }
+    //     else
+    //     {
+    //         _sr.color = Color.white;
+    //     }
+    // }
 
     private Transform GetNextChild ()
     {

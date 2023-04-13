@@ -50,6 +50,7 @@
      <Compile Include="Assets\Scripts\AIHandler.cs" />
      <Compile Include="Assets\Scripts\CarSFXHandler.cs" />
      <Compile Include="Assets\Scripts\AStar\AStarNode.cs" />
+     <Compile Include="Assets\Scripts\RaceFinished.cs" />
      <Compile Include="Assets\Scripts\CarInputHandler.cs" />
      <Compile Include="Assets\Scripts\CheckPoint.cs" />
      <Compile Include="Assets\Scripts\CarController.cs" />
@@ -62,7 +63,6 @@
      <Compile Include="Assets\Scripts\CarLapCounter.cs" />
      <Compile Include="Assets\Scripts\GameManager.cs" />
      <Compile Include="Assets\Scripts\CarRespawn.cs" />
-     <Compile Include="Assets\Scripts\RaceFinished.cs" />
      <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Overlay.shader" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap.shader" />

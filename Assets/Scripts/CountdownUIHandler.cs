@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,12 +14,24 @@ public class CountdownUIHandler : MonoBehaviour
     {
         CountDownText.text = "";
     }
-    // Start is called before the first frame update
-    void Start()
+    
+    private void OnEnable()
     {
+        GameManager.RaceReady += StartCountdown;
+    }
+
+    private void OnDisable()
+    {
+        GameManager.RaceReady -= StartCountdown;
+    }
+
+    void StartCountdown()
+    {
+        CountDownText.gameObject.SetActive(true);
         StartCoroutine(CountDownCO());
     }
 
+  
 
     IEnumerator CountDownCO()
     {
@@ -45,9 +58,6 @@ public class CountdownUIHandler : MonoBehaviour
                 CountDownText.text = "GO";
 
                 GameManager.instance.OnRaceStart();
-
-                
-
 
                 break;
             }

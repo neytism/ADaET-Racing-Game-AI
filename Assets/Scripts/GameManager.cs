@@ -1,12 +1,15 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public enum GameStates { countDown, running, raceOver};
+public enum GameStates { countDown, running, raceOver, difficultySelection};
 
 public class GameManager : MonoBehaviour
 {
+    public static event Action RaceReady;
+    
     //Static instance of GameManager to give access
     public static GameManager instance = null;
 
@@ -28,12 +31,14 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        gameState = GameStates.difficultySelection;
     }
 
-    void LevelStart()
+    public void LevelStart()
     {
         gameState = GameStates.countDown;
 
+        RaceReady?.Invoke();
         Debug.Log("Level Started");
     }
 
@@ -49,15 +54,20 @@ public class GameManager : MonoBehaviour
 
     }
 
-    private void OnEnable()
+    public void ResetRace()
     {
-        SceneManager.sceneLoaded += OnSceneLoaded;
+        gameState = GameStates.difficultySelection;
     }
 
-    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-    {
-        LevelStart();
-    }
+    // private void OnEnable()
+    // {
+    //     SceneManager.sceneLoaded += OnSceneLoaded;
+    // }
+    //
+    // void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    // {
+    //     LevelStart();
+    // }
 
     
 

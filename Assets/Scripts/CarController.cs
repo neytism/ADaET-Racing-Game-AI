@@ -31,7 +31,7 @@ public class CarController : MonoBehaviour
     
     private void FixedUpdate()
     {
-        if (GameManager.instance.GetGameStates() == GameStates.countDown)
+        if (GameManager.instance.GetGameStates() == GameStates.countDown || GameManager.instance.GetGameStates() == GameStates.difficultySelection)
             return;
         else
         {
@@ -39,9 +39,6 @@ public class CarController : MonoBehaviour
             KillOrthoganoalVelocity();
             ApplySteering();
         }
-        
-        
-        
     }
     
     public void SetInputVector(Vector2 input)

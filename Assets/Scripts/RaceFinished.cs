@@ -18,6 +18,8 @@ public class RaceFinished : MonoBehaviour
     public GameObject quitButton;
     
     public GameObject player;
+
+    public GameObject[] fireworks;
     private void OnEnable()
     {
         player.GetComponent<CarLapCounter>().PlayerFinishedRace += ShowFinishedPanel;
@@ -31,7 +33,21 @@ public class RaceFinished : MonoBehaviour
 
         int pos = player.GetComponent<CarLapCounter>().carPosition;
         
-        congratsText.text = pos < 3 ? "Congratulations!" : "You Lost!";
+        
+
+        if (pos < 3)
+        {
+            foreach (var VARIABLE in fireworks)
+            {
+                VARIABLE.SetActive(true);
+            }
+            congratsText.text = "Congratulations!";
+        }
+        else
+        {
+            congratsText.text = "You Lost!";
+        }
+        
         
         positionText.text = $"You finished {AddOrdinal(pos)} place!";
         
@@ -66,6 +82,7 @@ public class RaceFinished : MonoBehaviour
     
     public void RestartGame()
     {
+        GameManager.instance.ResetRace();
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 

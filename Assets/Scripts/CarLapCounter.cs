@@ -22,7 +22,7 @@ public class CarLapCounter : MonoBehaviour
     int numberOfPassedCheckpoints = 0;
 
     int lapsCompleted = 0;
-    const int lapsToComplete = 3;
+    const int lapsToComplete = 1;
 
     bool isRaceCompleted = false;
 

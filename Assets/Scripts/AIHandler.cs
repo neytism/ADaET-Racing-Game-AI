@@ -91,6 +91,13 @@ public class AIHandler : MonoBehaviour
 
     private void Start()
     {
+        
+    }
+
+    public void ApplyDifficulty(AIDifficulty difficulty)
+    {
+        aiDifficulty = difficulty;
+        
         if (gameObject.CompareTag("AI"))
         {
             switch (aiDifficulty)
@@ -121,7 +128,7 @@ public class AIHandler : MonoBehaviour
     void FixedUpdate()
     {
 
-        if (GameManager.instance.GetGameStates() == GameStates.countDown)
+        if (GameManager.instance.GetGameStates() == GameStates.countDown || GameManager.instance.GetGameStates() == GameStates.difficultySelection)
             return;
 
         Vector2 inputVector = Vector2.zero;
